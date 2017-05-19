@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.music.dao.AlbumDao">
+  	<select id="findHotAlbum" resultType="Album">
+  	select * from (select rownum,album.* from album order by clickcount desc) where rownum&lt;9
+  	</select>
+  	<select id="vagueSearchAlbum" resultType="Album">
+  		select * from(select rownum as rid,n.* from (select * from ALBUM where albumname like #{0} order by createDate desc)n ) where rid between (#{1}-1)*#{2}+1 and #{2}*#{1}
+  	</select>
+
+  	<select id="findAlbumByAlbumId" resultType="album">
+  		select * from album where albumID=#{albumID}
+  	</select>
+  	<insert id="addAlbum" parameterType="Album">
+		insert into Album values(albumid.nextval,#{albumName},#{albumInfo},#{clickCount},#{image},#{createDate},#{singerid})
+	</insert>
+	<select id="findAlbumByname" resultType="Album">
+		select * from album where albumname=#{albumName}
+	</select>
+	 
+	<select id="findBySingerIdHotFive" resultType="Album">
+ 	select * from (select * from album where singerid = #{singerId} order by clickcount desc)
+ 	where rownum between 1 and 5	
+ 	</select>
+ 	
+ 	<select id="findCountBySingerId" resultType="int">
+ 		select count(*) from album where singerid = #{singerid}
+ 	</select>
+ 	
+ 	<select id="findBySingerIdPage" resultType="Album">
+ 		select * from (select rownum as rid,n.* from(select * from album where singerid = #{singerId}
+ 		<if test="type=='Hot'">
+			order by clickcount desc
+		</if>
+		<if test="type=='New'">
+			order by createdate desc
+		</if>
+		 )n) where rid between (#{pageNo}-1)*#{size}+1 and #{pageNo}*#{size} 
+ 	</select>
+ 	
+ 	<select id="findAllAlbumPage" resultType="Album">
+		select * from
+		(select rownum as rid,n.* 
+		from
+		(select album.*,
+		(select singername from singer where singer.singerid=album.singerid)as singername 
+		from album 
+		order by
+		<if test="type=='hot'">
+			clickcount 
+		</if>
+		<if test="type=='new'">
+			createdate 
+		</if>
+		desc)n)
+		where rid between #{start} and #{end}
+	</select>
+	<select id="findAllAlbumCount" resultType="int">
+		select count(*) from album
+	</select>
+	 	<select id="findCountByAlbumName" resultType="int">
+ 		select count(*) from (select * from album where albumname like #{0})
+ 	</select>
+ 	
+ 	<select id="searchAlbumByName" resultType="Album">
+ 		select * from album where albumname like #{0}
+ 	</select>
+	
+	<update id="addAlbumClickCount">
+		update album set clickcount=#{0} where albumid=#{1}
+	</update>
+	
+	<delete id="deletealbum" parameterType="int">
+		delete from album where albumid=#{0}
+	</delete>
+	
+</mapper>

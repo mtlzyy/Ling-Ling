@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.music.dao.SongTypeDao">
+<select id="findTypeByTypeName" resultType="SongType">
+	select * from songtype where songtypename=#{songTypeName}
+</select>
+<select id="findType" resultType="songType">
+	select * from songtype
+</select>
+</mapper>

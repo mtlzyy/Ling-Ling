@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.music.dao.ListAndSongDao">
+	<select id="findSongIDby" resultType="ListAndSong">
+		select * from listandsong where favsongid=#{favsongid}
+	</select>
+	<insert id="insertListAndSong" parameterType="ListAndSong">
+		insert into listandsong values(listandsongid.nextval,#{0},#{1})
+	</insert>
+	<insert id="addListAndSong">
+		insert into listandsong values(listandsongid.nextval,#{0},#{1})
+	</insert>
+	<select id="findByFavIdAndSongId" resultType="ListAndSong">
+		select * from listandsong where favsongid=#{0} and songid=#{1}
+	</select>
+	
+	<delete id="removeSongFromFavSong">
+		delete from listandsong where favsongid = #{0} and songid = #{1}
+	</delete>
+</mapper>

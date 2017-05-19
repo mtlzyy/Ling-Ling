@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.music.dao.SingUserDao">
+	
+	<select id="findUserByUserName" resultType="SingUser">
+		select * from singuser where username = #{0} 
+	</select>
+	<select id="findUserByUserId" resultType="SingUser">
+		select * from singuser where userid=#{id}
+	</select>
+	<select id="findUserByEmail" resultType="SingUser">
+		select * from singuser where email = #{0} 
+	</select>
+	
+	<insert id="createNewUser" parameterType="TempUser">
+		insert into singuser(userid,username,passwords,nickname,sex,email,vip,registdate,manager,points) values(songuserid.nextval,#{userName},#{userpwd},'新用户'||#{tempID},0,#{email},0,sysdate,0,0)
+	</insert>
+	
+	<update id="updateEmail">
+		update singuser set email = #{1} where userid = #{0}
+	</update>
+	<update id="updateNkName">
+		update singuser set nickname = #{1} where userid = #{0}
+	</update>
+	<update id="updatePwd">
+		update singuser set passwords = #{1} where userid = #{0}
+	</update>
+	
+	<update id="uploadNewHead" parameterType="SingUser">
+		update singuser set head=#{head} where userid=#{userID}
+	</update>
+</mapper>

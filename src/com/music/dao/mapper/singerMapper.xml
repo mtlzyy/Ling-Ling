@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.music.dao.SingerDao">
+
+	<select id="findSinger" parameterType="int" resultType="Singer">
+		select * from singer where singerid =#{singerid}
+	</select>
+	
+	<select id="vagueSearchSinger" resultType="Singer">
+		select * from(select rownum as rid,n.* from (select * from singer where singername like #{0} order by birth desc)n ) where rid between (#{1}-1)*#{2}+1 and #{2}*#{1}
+  	</select>
+
+	<insert id="addSinger" parameterType="singer">
+		insert into singer values(singerID.nextval,#{singerName},#{sex},#{birth},#{nationality},#{image},#{beginEn},#{intro},#{grouptype})
+	</insert>
+	<select id="findSingerByname" resultType="Singer">
+		select * from singer where singername like #{singername}
+	</select>
+	
+	<!-- 动态查询歌手 -->
+	<select id="findSingers" resultType="Singer">
+		select * from (select rownum as rid,n.* from (select * from 
+		( select singer.* from singer right join(select sum(clickcount+downloadcount) cd,
+		singerid from songs group by singerid order by cd desc)m
+		on singer.singerid=m.singerid union all
+   		select * from singer where singerid not in (select singerid from songs)) where 1=1
+		<if test="beginEn!=null">
+			and beginEn = #{beginEn}
+		</if>
+		<if test="nation!=null">
+			and nationality = #{nation}
+		</if>
+		<if test="sex==0||sex==1">
+			and sex = #{sex}
+		</if>
+		) n) 
+		where rid between (#{pageNo}-1)*15+1 and #{pageNo}*15
+	</select>
+	
+	<!-- 动态查询的总数量 -->
+	<select id="singersCount" resultType="int">
+		select count(*) from singer where 1=1
+		<if test="beginEn!=null">
+			and beginEn = #{beginEn}
+		</if>
+		<if test="nation!=null">
+			and nationality = #{nation}
+		</if>
+		<if test="sex==0||sex==1">
+			and sex = #{sex}
+		</if>
+	</select>
+	
+	<select id="findBeginEn" resultType="String">
+		select beginen from singer group by beginen order by beginen
+	</select>
+	<select id="findNation" resultType="String">
+		select nationality from singer group by nationality
+	</select>
+	<select id="findCountByName" resultType="int">
+		select count(*) from singer where singername like #{0}
+	</select>
+	<delete id="deleteSinger" parameterType="int">
+		delete from singer where singerid=#{0}
+	</delete>
+</mapper>

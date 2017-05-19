@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.music.dao.SongsDao">
+	<select id="findHotSongs" resultType="Songs">
+	select * from (select * from songs order by clickcount desc) where rownum&lt;11
+	</select>
+	<select id="findNewSongs" resultType="Songs">
+	select * from (select rownum,songs.* from songs order by songdate desc) where rownum&lt;11
+	</select>
+	<select id="vagueSearchSongs" resultType="Songs">
+		select * from(select rownum as rid,n.* from (select * from songs where songname like #{0} order by songdate desc)n ) where rid between (#{1}-1)*#{2}+1 and #{2}*#{1}
+  	</select>
+
+	<insert id="addsongs" parameterType="Songs">
+	insert into songs values(songID.nextval,#{songName},
+		<if test="albumID==0">
+		null
+		</if>
+		<if test="albumID!=0">
+		#{albumID}
+		</if>
+		,#{songTypeID},#{languages},#{downloadCount},#{clickCount},#{vipSong},#{urls},#{songDate},#{lyric},#{image},#{singerID})
+	</insert>
+	<select id="findLanguage" resultType="String">
+		select languages from songs group by languages
+	</select>
+	
+	<select id="rankSongs" resultType="Songs">
+	select * from (select rownum as snum,song.* from (select * from songs 
+	<if test="languages!=''">
+		where languages = #{languages}
+	</if>
+	<if test="order!=''">
+	 order by  
+	<choose><when test="order=='clickcount'">clickcount</when>
+	<when test="order=='songdate'">songDate</when></choose></if>
+	desc)song where rownum&lt;=100) where snum&gt;=(#{0}-1)*15+1 and snum&lt;=#{0}*15
+	</select>
+	
+	<select id="rankcount" resultType="int">
+		select count(*) from songs 
+		<if test="languages!=''">
+		where languages = #{languages}
+	</if>
+	</select>
+		
+	<select id="findBySingerId" resultType="Songs">
+		select songs.*,
+		(select albumname from album where album.albumid=songs.albumid) albumname
+		from songs where singerid=#{singerId}
+	</select>
+	
+	<select id="findBySingerIdHotTen" resultType="Songs">
+		select n.* from(select songs.*,
+		(select albumname from album where album.albumid=songs.albumid) albumname
+		from songs where singerid=#{singerId} order by clickcount desc )n
+   		where rownum between 1 and 10
+	</select>
+	
+	<select id="findCountBySingerId" resultType="int">
+		select count(*) from songs where singerid =#{singerId}
+	</select>
+	
+	<select id="findBySingerIdPage" resultType="Songs">
+		select * from (
+		select rownum as rid,n.* from( 
+		select songs.*, (select albumname from album where album.albumid=songs.albumid) albumname from songs 
+		where singerid=#{singerId}	
+		<if test="type=='Hot'">
+			order by clickcount+downloadcount desc
+		</if>
+		<if test="type=='New'">
+			order by songdate desc
+		</if>
+		 )n) where rid between (#{pageNo}-1)*#{size}+1 and #{pageNo}*#{size}
+	</select>
+	
+	<!-- 根据歌单id找歌曲列表 -->
+	<select id="findFavSongsByFavSongId" resultType="Songs" >
+		select a.*,
+		(select albumname from album where album.albumid=a.albumid) as albumname,
+		(select singername from singer where singer.singerid=a.singerid) as singername 
+		from
+		(select * from songs where songid in
+		(select songid from listandsong where favsongid=#{id})) a
+	</select>
+	<!-- 根据歌单id找歌曲列表 -->
+	<select id="findAlbumSongsByAlbumId" resultType="Songs">
+		select songs.*,(select singername from singer where singer.singerid=songs.singerid) as singername,(select albumname from album where album.albumid=songs.albumid) as albumname from songs where albumid=#{id}
+	</select>
+	
+	<select id="findCountBySongName" resultType="int">
+		select count(*) from songs where songname like #{0}
+	</select>
+	
+	<select id="searchSongsByName" resultType="Songs">
+		select * from songs where songname like #{0}
+	</select>
+
+	<!--根据歌曲id查找歌曲  -->
+	<select id="findSongToMedia" resultType="Songs">
+		select * from songs where songid=#{songID}
+	</select>
+
+	<delete id="deletesongs" parameterType="int">
+		delete from songs where songid=#{0}
+	</delete>
+</mapper>

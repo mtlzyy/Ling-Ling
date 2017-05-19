@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.music.dao.FavAlbumDao">
+  	<select id="findAllAlbumByUser" resultType="FavAlbum">
+  		select * from favalbum where userid = #{0}
+  	</select>
+  	
+  	<select id="findFavAlbumByUserWithPage" resultType="FavAlbum">
+		select * from (select rownum as rid,n.* from (select * from favalbum where userid = #{0}) n) where rid between #{1}*10-9 and #{1}*10  	
+	</select>
+  	
+  	<select id="findFavAlbumByAlbumIdandUserId" resultType="FavAlbum">
+  		select * from favalbum where albumid=#{0} and userid=#{1}
+  	</select>
+  	
+  	<insert id="addFavAlbum">
+  		insert into favalbum values(favalbumid.nextval,#{1},#{0})
+  	</insert>
+  	
+  	<delete id="deleteFavAlbum">
+  		delete from favalbum where albumid=#{0} and userid=#{1}
+  	</delete>
+</mapper>

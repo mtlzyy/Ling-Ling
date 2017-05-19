@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration  
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"  
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<typeAlias type="com.music.pojo.Album" alias="Album"/>
+		<typeAlias type="com.music.pojo.Comments" alias="Comments"/>
+		<typeAlias type="com.music.pojo.FavAlbum" alias="FavAlbum"/>
+		<typeAlias type="com.music.pojo.FavList" alias="FavList"/>
+		<typeAlias type="com.music.pojo.FavSong" alias="FavSong"/>
+		<typeAlias type="com.music.pojo.ListAndSong" alias="ListAndSong"/>
+		<typeAlias type="com.music.pojo.Recommand" alias="Recommand"/>
+		<typeAlias type="com.music.pojo.Singer" alias="Singer"/>
+		<typeAlias type="com.music.pojo.SingUser" alias="SingUser"/>
+		<typeAlias type="com.music.pojo.SongAndSinger" alias="SongAndSinger"/>
+		<typeAlias type="com.music.pojo.Songs" alias="Songs"/>
+		<typeAlias type="com.music.pojo.SongType" alias="SongType"/>
+		<typeAlias type="com.music.pojo.TempUser" alias="TempUser"/>
+	</typeAliases>
+	<mappers>
+		<mapper resource="com/music/dao/mapper/albumMapper.xml"/>
+		<mapper resource="com/music/dao/mapper/commentsMapper.xml"/>
+		<mapper resource="com/music/dao/mapper/favAlbumMapper.xml"/>
+		<mapper resource="com/music/dao/mapper/favListMapper.xml"/>
+		<mapper resource="com/music/dao/mapper/favSongMapper.xml"/>
+		<mapper resource="com/music/dao/mapper/listAndSongMapper.xml"/>
+		<mapper resource="com/music/dao/mapper/recommandMapper.xml"/>
+		<mapper resource="com/music/dao/mapper/singerMapper.xml"/>
+		<mapper resource="com/music/dao/mapper/singUserMapper.xml"/>
+		<mapper resource="com/music/dao/mapper/songAndSingerMapper.xml"/>
+		<mapper resource="com/music/dao/mapper/songTypeMapper.xml"/>
+		<mapper resource="com/music/dao/mapper/tempUserMapper.xml"/>
+		<mapper resource="com/music/dao/mapper/songsMapper.xml"/>
+	</mappers>
+</configuration>

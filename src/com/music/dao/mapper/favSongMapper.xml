@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.music.dao.FavSongDao">
+	<resultMap type="com.music.pojo.FavSong" id="favSong">
+		<id property="favsongID" column="favsongid"/>
+		<result property="favsongName" column="favsongname"/>
+		<result property="clickCount" column="clickcount"/>
+		<result property="userID" column="userid"/>
+		<result property="image" column="image"/>
+		<result property="createDate" column="createdate"/>
+		<association property="singUser" javaType="SingUser">
+			<id property="userID" column="userid"/>
+			<result property="nickName" column="nickname"/>
+		</association>
+	</resultMap>
+	<select id="findFavSongPage" resultMap="favSong">
+		select * from(select rownum as rid,n.*from(select favsong.*,singuser.nickname from favsong,singuser where favsong.userid=singuser.userid order by favsong.clickcount desc) n) where rid between #{start} and #{end}
+	</select>
+	
+	<select id="findHotFavSong" resultType="FavSong">
+  		select * from (select rownum,favsong.* from favsong order by clickcount desc) where rownum&lt;9
+  	</select>
+  	
+  	<select id="findFavSongCount" resultType="int">
+  		select count(*) from favsong
+  	</select>
+  	
+  	<select id="findFavSongByUser" resultType="FavSong">
+  		select * from favsong where userid = #{userID}
+  	</select>
+  	
+	<select id="vagueSearchFavsong" resultType="FavSong">
+  		select * from(select rownum as rid,n.* from (select * from FavSong where favsongName like #{0} order by createDate desc)n ) where rid between (#{1}-1)*#{2}+1 and #{2}*#{1}
+  	</select>
+  	
+  	<select id="findFavSongByUserIdWithPage" resultType="FavSong">
+  		select * from (select rownum as rid,n.* from (select * from favsong where userid = #{0} order by createdate desc) n) where rid between #{1}*10-9 and #{1}*10
+  	</select>
+	
+	<select id="findAllFavSongByUser" resultType="FavSong">
+		select * from favsong where userid = #{0}
+	</select>
+
+	<update id="uploadFavsongImage" parameterType="Favsong">
+		update favsong set image=#{image} where favsongid=#{favsongID}
+	</update>
+	
+	<select id="findFavsongByFavsongid" resultType="FavSong">
+		select * from favsong where favsongid=#{favsongID}
+	</select>
+	
+	<select id="findCountbyvagueSearch" resultType="int">
+		select count(*) from (select * from favsong where favsongName like #{0})
+	</select>
+	
+	<select id="findNewFavSongPage" resultMap="favSong">
+  		select * from(select rownum as rid,n.*from(select favsong.*,singuser.nickname from favsong,singuser where favsong.userid=singuser.userid order by favsong.createdate desc) n) where rid between #{start} and #{end}
+  	</select>
+  	
+  	<select id="findFavSongById" resultMap="favSong">
+  		select favsong.*,singuser.nickname from favsong,singuser where favsong.userid=singuser.userid and favsong.favsongid=#{id}
+  	</select>
+  	
+  	<select id="findFavSongListByUserId" resultMap="favSong">
+  		select * from favsong where userid=#{userId}
+  	</select>
+  	
+  	<insert id="addFavSong">
+  		insert into favsong values(favsongid.nextval,#{0},#{1},0,'1.jpg',sysdate)
+  	</insert>
+  	
+  	<select id="findFavsongByfavSongNameAndUserid" resultMap="favSong">
+  		select * from favsong where favsongname=#{0} and userid=#{1}
+  	</select>
+  	
+  	<update id="addFavSongClickCount">
+  		update favsong set clickcount=#{0} where favsongid=#{1}
+  	</update>
+  	
+  	<delete id="deleteFavSongById">
+  		delete from favsong where favsongid = #{0}
+  	</delete>
+  	
+  	<update id="deleteOwnFavSongById">
+  		update favsong set userid = 0 where favsongid = #{0}
+  	</update>
+  	
+  	<select id="currFavSongId" resultType="int">
+  		select favsongid from (select rownum as rid, n.* from (select favsongid from favsong order by createdate desc)n)
+		where rid = 1
+  	</select>
+</mapper>
